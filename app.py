@@ -456,7 +456,7 @@ with tab1:
     cats = ["すべて"] + list(CATEGORY_COLORS.keys())
     status_opts = ["すべて", "未判定", "わからない", "曖昧", "わかった"]
     cat = st.session_state.get("study_cat", "すべて")
-    status_f = st.session_state.get("study_status", "すべて")
+    status_f = st.session_state.get("study_status", "未判定")
 
     deck = []
     for c in all_cards:
