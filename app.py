@@ -497,9 +497,9 @@ tab1, tab2, tab3, tab4 = st.tabs(["学習", "検索", "一覧", "追加"])
 
 with tab1:
     cats = ["すべて"] + list(CATEGORY_COLORS.keys())
-    cat = st.selectbox("カテゴリ", cats, key="study_cat")
     status_opts = ["すべて", "未判定", "わからない", "曖昧", "わかった"]
-    status_f = st.selectbox("習熟度", status_opts, key="study_status")
+    cat = st.session_state.get("study_cat", "すべて")
+    status_f = st.session_state.get("study_status", "すべて")
 
     deck = []
     for c in all_cards:
@@ -593,6 +593,10 @@ with tab1:
             st.session_state.card_index += 1
             st.session_state.show_back = False
             st.rerun()
+
+    st.write("")
+    st.selectbox("カテゴリ", cats, key="study_cat")
+    st.selectbox("習熟度", status_opts, key="study_status")
 
 with tab2:
     query = st.text_input("用語を入力", placeholder="例：元利均等、擁壁、ROI…")
