@@ -436,8 +436,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-col1, col2, col3, col4 = st.columns(4)
-
 def stat_box(col, label, value, key, status_key):
     active = st.session_state.status_filter == status_key
     bg = "#0abab5" if active else "#f0fafa"
@@ -451,47 +449,6 @@ def stat_box(col, label, value, key, status_key):
     if col.button("▼" if active else "▶", key=key, use_container_width=True):
         st.session_state.status_filter = None if st.session_state.status_filter == status_key else status_key
         st.rerun()
-
-stat_box(col1, "わかった", known_n, "btn_known", "known")
-stat_box(col2, "曖昧", fuzzy_n, "btn_fuzzy", "fuzzy")
-stat_box(col3, "わからない", unknown_n, "btn_unknown", "unknown")
-
-col4.markdown(f"""
-<div style="background:#f0fafa;border:1px solid #b2e0dd;padding:18px 16px;text-align:center;">
-  <div style="font-size:0.68rem;color:#888;letter-spacing:0.15em;" translate="no">合計</div>
-  <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:#0abab5;">{rated}/{total}</div>
-</div>""", unsafe_allow_html=True)
-
-if total > 0:
-    st.progress(known_n / total)
-
-if st.session_state.status_filter:
-    sf = st.session_state.status_filter
-    label_map = {"known": "わかった", "fuzzy": "曖昧", "unknown": "わからない"}
-    filtered = [c for c in all_cards if statuses.get(str(c["id"])) == sf]
-    st.markdown(f"<div style='margin:16px 0 8px;font-size:0.8rem;color:#0abab5;letter-spacing:0.1em;'>— {label_map[sf]}　{len(filtered)}語 —</div>", unsafe_allow_html=True)
-    for c in filtered:
-        cid_f = str(c["id"])
-        with st.expander(f"{c['term']}　{c.get('reading','')}"):
-            st.write(c["meaning"])
-            if c.get("example"): st.info(c["example"])
-            if sf in ("unknown", "fuzzy"):
-                if st.button("わかった ✓", key=f"promote_{cid_f}", type="primary", use_container_width=True):
-                    statuses[cid_f] = "known"
-                    save_statuses(statuses)
-                    st.rerun()
-            elif sf == "known":
-                b1, b2 = st.columns(2)
-                if b1.button("曖昧に戻す", key=f"to_fuzzy_{cid_f}", use_container_width=True):
-                    statuses[cid_f] = "fuzzy"
-                    save_statuses(statuses)
-                    st.rerun()
-                if b2.button("わからないに戻す", key=f"to_unknown_{cid_f}", use_container_width=True):
-                    statuses[cid_f] = "unknown"
-                    save_statuses(statuses)
-                    st.rerun()
-
-st.divider()
 
 tab1, tab2, tab3, tab4 = st.tabs(["学習", "検索", "一覧", "追加"])
 
@@ -697,3 +654,44 @@ with tab4:
                 custom_cards.pop(i)
                 save_custom(custom_cards)
                 st.rerun()
+
+st.divider()
+
+col1, col2, col3, col4 = st.columns(4)
+stat_box(col1, "わかった", known_n, "btn_known", "known")
+stat_box(col2, "曖昧", fuzzy_n, "btn_fuzzy", "fuzzy")
+stat_box(col3, "わからない", unknown_n, "btn_unknown", "unknown")
+col4.markdown(f"""
+<div style="background:#f0fafa;border:1px solid #b2e0dd;padding:18px 16px;text-align:center;">
+  <div style="font-size:0.68rem;color:#888;letter-spacing:0.15em;" translate="no">合計</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:#0abab5;">{rated}/{total}</div>
+</div>""", unsafe_allow_html=True)
+
+if total > 0:
+    st.progress(known_n / total)
+
+if st.session_state.status_filter:
+    sf = st.session_state.status_filter
+    label_map = {"known": "わかった", "fuzzy": "曖昧", "unknown": "わからない"}
+    filtered = [c for c in all_cards if statuses.get(str(c["id"])) == sf]
+    st.markdown(f"<div style='margin:16px 0 8px;font-size:0.8rem;color:#0abab5;letter-spacing:0.1em;'>— {label_map[sf]}　{len(filtered)}語 —</div>", unsafe_allow_html=True)
+    for c in filtered:
+        cid_f = str(c["id"])
+        with st.expander(f"{c['term']}　{c.get('reading','')}"):
+            st.write(c["meaning"])
+            if c.get("example"): st.info(c["example"])
+            if sf in ("unknown", "fuzzy"):
+                if st.button("わかった ✓", key=f"promote_{cid_f}", type="primary", use_container_width=True):
+                    statuses[cid_f] = "known"
+                    save_statuses(statuses)
+                    st.rerun()
+            elif sf == "known":
+                b1, b2 = st.columns(2)
+                if b1.button("曖昧に戻す", key=f"to_fuzzy_{cid_f}", use_container_width=True):
+                    statuses[cid_f] = "fuzzy"
+                    save_statuses(statuses)
+                    st.rerun()
+                if b2.button("わからないに戻す", key=f"to_unknown_{cid_f}", use_container_width=True):
+                    statuses[cid_f] = "unknown"
+                    save_statuses(statuses)
+                    st.rerun()
