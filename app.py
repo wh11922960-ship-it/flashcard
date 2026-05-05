@@ -681,32 +681,44 @@ if st.session_state.status_filter:
             st.write(c["meaning"])
             if c.get("example"): st.info(c["example"])
             if sf == "unknown":
-                b1, b2 = st.columns(2)
-                if b1.button("曖昧", key=f"to_fuzzy_{cid_f}", use_container_width=True):
+                b1, b2, b3 = st.columns(3)
+                if b1.button("未判定", key=f"to_none_{cid_f}", use_container_width=True):
+                    statuses.pop(cid_f, None)
+                    save_statuses(statuses)
+                    st.rerun()
+                if b2.button("曖昧", key=f"to_fuzzy_{cid_f}", use_container_width=True):
                     statuses[cid_f] = "fuzzy"
                     save_statuses(statuses)
                     st.rerun()
-                if b2.button("わかった ✓", key=f"promote_{cid_f}", type="primary", use_container_width=True):
+                if b3.button("わかった ✓", key=f"promote_{cid_f}", type="primary", use_container_width=True):
                     statuses[cid_f] = "known"
                     save_statuses(statuses)
                     st.rerun()
             elif sf == "fuzzy":
-                b1, b2 = st.columns(2)
-                if b1.button("わからない", key=f"to_unknown_{cid_f}", use_container_width=True):
+                b1, b2, b3 = st.columns(3)
+                if b1.button("未判定", key=f"to_none_{cid_f}", use_container_width=True):
+                    statuses.pop(cid_f, None)
+                    save_statuses(statuses)
+                    st.rerun()
+                if b2.button("わからない", key=f"to_unknown_{cid_f}", use_container_width=True):
                     statuses[cid_f] = "unknown"
                     save_statuses(statuses)
                     st.rerun()
-                if b2.button("わかった ✓", key=f"promote_{cid_f}", type="primary", use_container_width=True):
+                if b3.button("わかった ✓", key=f"promote_{cid_f}", type="primary", use_container_width=True):
                     statuses[cid_f] = "known"
                     save_statuses(statuses)
                     st.rerun()
             elif sf == "known":
-                b1, b2 = st.columns(2)
-                if b1.button("曖昧に戻す", key=f"to_fuzzy_{cid_f}", use_container_width=True):
+                b1, b2, b3 = st.columns(3)
+                if b1.button("未判定", key=f"to_none_{cid_f}", use_container_width=True):
+                    statuses.pop(cid_f, None)
+                    save_statuses(statuses)
+                    st.rerun()
+                if b2.button("曖昧に戻す", key=f"to_fuzzy_{cid_f}", use_container_width=True):
                     statuses[cid_f] = "fuzzy"
                     save_statuses(statuses)
                     st.rerun()
-                if b2.button("わからないに戻す", key=f"to_unknown_{cid_f}", use_container_width=True):
+                if b3.button("わからないに戻す", key=f"to_unknown_{cid_f}", use_container_width=True):
                     statuses[cid_f] = "unknown"
                     save_statuses(statuses)
                     st.rerun()
