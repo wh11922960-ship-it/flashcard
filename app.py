@@ -680,8 +680,23 @@ if st.session_state.status_filter:
         with st.expander(f"{c['term']}　{c.get('reading','')}"):
             st.write(c["meaning"])
             if c.get("example"): st.info(c["example"])
-            if sf in ("unknown", "fuzzy"):
-                if st.button("わかった ✓", key=f"promote_{cid_f}", type="primary", use_container_width=True):
+            if sf == "unknown":
+                b1, b2 = st.columns(2)
+                if b1.button("曖昧", key=f"to_fuzzy_{cid_f}", use_container_width=True):
+                    statuses[cid_f] = "fuzzy"
+                    save_statuses(statuses)
+                    st.rerun()
+                if b2.button("わかった ✓", key=f"promote_{cid_f}", type="primary", use_container_width=True):
+                    statuses[cid_f] = "known"
+                    save_statuses(statuses)
+                    st.rerun()
+            elif sf == "fuzzy":
+                b1, b2 = st.columns(2)
+                if b1.button("わからない", key=f"to_unknown_{cid_f}", use_container_width=True):
+                    statuses[cid_f] = "unknown"
+                    save_statuses(statuses)
+                    st.rerun()
+                if b2.button("わかった ✓", key=f"promote_{cid_f}", type="primary", use_container_width=True):
                     statuses[cid_f] = "known"
                     save_statuses(statuses)
                     st.rerun()
